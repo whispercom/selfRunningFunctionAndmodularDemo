@@ -102,7 +102,7 @@
     <script>
         // 模块化开发
         // 自运行函数
-        var module1 = (function () {
+        var module1 = (function (window,$,undefined) {
             var _count = 0;
             var m1 = function () {
                 //...
@@ -114,7 +114,7 @@
                 m1: m1,
                 m2: m2
             };
-        })();
+        })(window,$);
     </script>
 </body>
 
