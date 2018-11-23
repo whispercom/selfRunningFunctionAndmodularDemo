@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="screen-orientation" content="portrait" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <title>ceshi</title>
+    <script>
+        (function (doc, win) {
+            var docEl = doc.documentElement,
+                resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+                recalc = function () {
+                    var clientWidth = docEl.clientWidth;
+                    if (!clientWidth) return;
+                    if (clientWidth > 640) clientWidth = 640;
+                    docEl.style.fontSize = 100 * (clientWidth / 640) + 'px';
+                };
+            if (!doc.addEventListener) return;
+            win.addEventListener(resizeEvt, recalc, false);
+            recalc();
+        })(document, window);
+    </script>
+    <script>
+        var browserRule = /^.*((iPhone)|(iPad)|(Safari))+.*$/;
+        if (browserRule.test(navigator.userAgent)) {
+            window.onpageshow = function (event) {
+                if (event.persisted) {
+                    window.location.reload()
+                }
+            };
+        }
+    </script>
+    <link rel="stylesheet" href="http://cdn.ulandian.com/src/css/reset.css">
+    <!-- <link rel="stylesheet" href="./test.css"> -->
+    <style>
+        html,
+        body {
+            background: #f2f2f2;
+            font-size: 0.24rem;
+            /* overflow: hidden; */
+            /* height: 100%; */
+        }
+
+        h3 {
+            font-weight: normal;
+        }
+
+        a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        ul li {
+            list-style: none;
+        }
+
+        .container {
+            position: relative;
+            width: 6.4rem;
+            min-width: 3.2rem;
+            max-width: 7.5rem;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 0.24rem;
+            height: 100%;
+            margin-bottom: 0.9rem;
+        }
+
+        /* showTip begin */
+
+        .tips {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.6);
+            font-size: 0.22rem;
+        }
+
+        .tips>.wrap {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            width: 5.5rem;
+            background: #fff;
+            border-radius: 0.1rem;
+            color: #333;
+        }
+
+        .tips h3 {
+            line-height: 1em;
+            font-weight: normal;
+            font-size: 0.36rem;
+            text-align: center;
+        }
+
+        .tips_divp {
+            margin: 0.5rem 0;
+        }
+
+        .tips p {
+            margin: 0.15rem 0;
+            font-size: 0.26rem;
+            text-align: center;
+            line-height: .38rem;
+        }
+
+        .tips .sure {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            line-height: 0.78rem;
+            font-size: 0.28rem;
+            color: #11a1ff;
+            border-top: 0.01rem solid #e6e6e6;
+        }
+
+        /* showTip end */
+
+        /* showAlert begin */
+
+        .alert {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.6);
+            font-size: 0.24rem;
+        }
+
+        .alert>.wrap {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            width: 5.5rem;
+            /* min-height: 4.2rem; */
+            background: #fff;
+            color: #333;
+            border-radius: 0.1rem;
+        }
+
+        .alert h5 {
+            font-size: .33rem;
+            text-align: center;
+            margin: 0.4rem 0 0.38rem 0;
+            font-weight: normal;
+        }
+
+        .alert p {
+            font-size: 0.26rem;
+            margin-bottom: 0.4rem;
+            padding: 0 0.20rem;
+            line-height: .38rem;
+        }
+
+        .alert .spanlines {
+            border-top: 0.01rem solid #e6e6e6;
+            padding-bottom: .2rem;
+        }
+
+        .alert .span_line {
+            margin: 0 0.2rem;
+            padding-top: .2rem;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -moz-box;
+            display: flex;
+            -webkit-box-pack: justify;
+            -webkit-justify-content: space-between;
+            -moz-box-pack: justify;
+            justify-content: space-between;
+
+        }
+
+        .alert .span_line span:nth-of-type(1) {
+            font-size: 0.24rem;
+        }
+
+        .alert .span_line span:nth-of-type(2) {
+            font-size: 0.28rem;
+            color: #ff2d47;
+            font-weight: bold;
+        }
+
+        .alert span {
+            display: inline-block;
+        }
+
+        .alert .btn_group {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -moz-box;
+            display: flex;
+            width: 100%;
+            height: 0.78rem;
+            border-top: 0.01rem solid #e6e6e6;
+        }
+
+        .alert a {
+            position: relative;
+            display: inline-block;
+            width: 50%;
+            text-align: center;
+            line-height: 0.78rem;
+            color: #999999;
+            text-decoration: none;
+        }
+
+        .alert .cancel {
+            font-size: .28rem;
+
+        }
+
+        .alert .cancel:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 0.76rem;
+            border-right: 0.01rem solid #e6e6e6;
+        }
+
+        .alert .sure {
+            color: #11a1ff;
+            font-size: .28rem;
+        }
+
+        /* showAlert end */
+
+        /*new  */
+
+        .header {
+            background: #fff;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -moz-box;
+            display: flex;
+            -webkit-box-pack: justify;
+            -webkit-justify-content: space-between;
+            -moz-box-pack: justify;
+            justify-content: space-between;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            -moz-box-align: center;
+            align-items: center;
+            padding: 0 0.2rem;
+            min-height: 0.8rem;
+            color: #333333;
+        }
+
+        .header_left {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -moz-box;
+            display: flex;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            -moz-box-align: center;
+            align-items: center;
+            font-size: 0.28rem;
+        }
+
+        .header_left img {
+            width: 0.44rem;
+            height: 0.44rem;
+            border-radius: 50%;
+            -webkit-border-radius: 50%;
+            margin-right: 0.2rem;
+        }
+
+        .header_right {
+            font-size: 0.24rem;
+        }
+
+        .courier_list {
+            margin-top: 0.1rem;
+            background: #fff;
+        }
+
+        .courier_items {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -moz-box;
+            display: flex;
+            border-bottom: 0.01rem solid #f2f2f2;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            -moz-box-align: center;
+            align-items: center;
+            min-height: 2.4rem;
+            position: relative;
+            color: #333;
+            padding: .2rem 0;
+        }
+
+        .gou_img {
+            width: 0.3rem;
+            height: 0.3rem;
+            border-radius: 50%;
+            -webkit-border-radius: 50%;
+            margin: 0 0.28rem 0 0.27rem;
+        }
+
+        .items_right {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -moz-box;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -webkit-flex-direction: column;
+            -moz-box-orient: vertical;
+            -moz-box-direction: normal;
+            flex-direction: column;
+            line-height: .39rem;
+        }
+
+        .items_right p {
+            font-size: 0.28rem;
+            font-weight: 500;
+        }
+
+        .items_right span {
+            font-size: .24rem;
+        }
+
+        .items_right span.delay_items img {
+            width: .24rem;
+            height: .24rem;
+            position: relative;
+            top: .02rem;
+            left: .2rem;
+        }
+
+        .items_right span span.delay_msg {
+            color: #ff2d47;
+        }
+
+        .items_status {
+            position: absolute;
+            right: 0.2rem;
+            display: none;
+        }
+
+        .footer {
+            width: 100%;
+            height: 0.8rem;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+        }
+
+        .btn_get {
+            width: 100%;
+            height: 100%;
+            color: #fff;
+            background: #009eff;
+            outline: none;
+            font-size: .3rem;
+            border: none;
+        }
+
+        button.active_color {
+            background: #cccccc;
+        }
+
+        /* 取件成功小提示 */
+
+        .succ-pop {
+            width: 1.8rem;
+            height: .6rem;
+            background: #333333;
+            color: #fff;
+            font-size: .24rem;
+            text-align: center;
+            line-height: .6rem;
+            opacity: .8;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            margin-left: -0.9rem;
+            margin-top: -0.3rem;
+            z-index: 9999;
+            border-radius: 0.11rem;
+            -webkit-border-radius: 0.11rem;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <script src="http://cdn.ulandian.com/src/js/jquery-3.2.0.min.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="http://cdn.ulandian.com/src/js/fastclick.js"></script>
+    <script src="http://cdn.ulandian.com/src/js/bscroll.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            FastClick.attach(document.body);
+        });
+
+        // var ajaxEx = {
+        //     baseUrl: 'http://sh.ulandian.com/weixin/mylandian',
+        //     handlePromises: function (num) {
+        //         var baseUrl = this.baseUrl;
+        //         return new Promise(function (resolve, reject) {
+        //             if (num % 2 == 0) {
+        //                 resolve(num)
+        //             } else {
+        //                 reject(num)
+        //             }
+        //         });
+        //     },
+        // }
+        // 这个函数可以封装ajax请求
+        var ajaxEx = (function () {
+            var handlePromises = function (num) {
+                return new Promise(function (resolve, reject) {
+                    if (num % 2 == 0) {
+                        resolve(num)
+                    } else {
+                        reject(num)
+                    }
+                });
+            };
+            var handleNum=function(num){
+                return handlePromises(num);
+            }
+            return {handleNum};
+        })();
+
+        ajaxEx.handleNum(Math.floor(Math.random() * 10)).then(function (data) {
+            console.log('if偶数', data)
+        }).catch(function (errors) {
+            console.log('else奇数', errors)
+        })
+
+        // ajaxEx(Math.floor(Math.random() * 10)).handlePromises().then(function (data) {
+        //     console.log('if偶数', data)
+        // }).catch(function (errors) {
+        //     console.log('else奇数', errors)
+        // })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="screen-orientation" content="portrait" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <title>扫码取件</title>
+    <script>
+        (function (doc, win) {
+            var docEl = doc.documentElement,
+                resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+                recalc = function () {
+                    var clientWidth = docEl.clientWidth;
+                    if (!clientWidth) return;
+                    if (clientWidth > 640) clientWidth = 640;
+                    docEl.style.fontSize = 100 * (clientWidth / 640) + 'px';
+                };
+            if (!doc.addEventListener) return;
+            win.addEventListener(resizeEvt, recalc, false);
+            recalc();
+        })(document, window);
+    </script>
+    <script>
+        var browserRule = /^.*((iPhone)|(iPad)|(Safari))+.*$/;
+        if (browserRule.test(navigator.userAgent)) {
+            window.onpageshow = function (event) {
+                if (event.persisted) {
+                    window.location.reload()
+                }
+            };
+        }
+    </script>
+    <link rel="stylesheet" href="http://cdn.ulandian.com/src/css/reset.css">
+    <!-- <link rel="stylesheet" href="./test.css"> -->
+    <style>
+        html,
+        body {
+            background: #f2f2f2;
+            font-size: 0.24rem;
+            /* overflow: hidden; */
+            /* height: 100%; */
+        }
+
+        h3 {
+            font-weight: normal;
+        }
+
+        a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        ul li {
+            list-style: none;
+        }
+
+        .container {
+            position: relative;
+            width: 6.4rem;
+            min-width: 3.2rem;
+            max-width: 7.5rem;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 0.24rem;
+            height: 100%;
+            margin-bottom: 0.9rem;
+        }
+
+        /* showTip begin */
+
+        .tips {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.6);
+            font-size: 0.22rem;
+        }
+
+        .tips>.wrap {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            width: 5.5rem;
+            background: #fff;
+            border-radius: 0.1rem;
+            color: #333;
+        }
+
+        .tips h3 {
+            line-height: 1em;
+            font-weight: normal;
+            font-size: 0.36rem;
+            text-align: center;
+        }
+
+        .tips_divp {
+            margin: 0.5rem 0;
+        }
+
+        .tips p {
+            margin: 0.15rem 0;
+            font-size: 0.26rem;
+            text-align: center;
+            line-height: .38rem;
+        }
+
+        .tips .sure {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            line-height: 0.78rem;
+            font-size: 0.28rem;
+            color: #11a1ff;
+            border-top: 0.01rem solid #e6e6e6;
+        }
+
+        /* showTip end */
+
+        /* showAlert begin */
+
+        .alert {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.6);
+            font-size: 0.24rem;
+        }
+
+        .alert>.wrap {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            width: 5.5rem;
+            /* min-height: 4.2rem; */
+            background: #fff;
+            color: #333;
+            border-radius: 0.1rem;
+        }
+
+        .alert h5 {
+            font-size: .33rem;
+            text-align: center;
+            margin: 0.4rem 0 0.38rem 0;
+            font-weight: normal;
+        }
+
+        .alert p {
+            font-size: 0.26rem;
+            margin-bottom: 0.4rem;
+            padding: 0 0.20rem;
+            line-height: .38rem;
+        }
+
+        .alert .spanlines {
+            border-top: 0.01rem solid #e6e6e6;
+            padding-bottom: .2rem;
+        }
+
+        .alert .span_line {
+            margin: 0 0.2rem;
+            padding-top: .2rem;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -moz-box;
+            display: flex;
+            -webkit-box-pack: justify;
+            -webkit-justify-content: space-between;
+            -moz-box-pack: justify;
+            justify-content: space-between;
+
+        }
+
+        .alert .span_line span:nth-of-type(1) {
+            font-size: 0.24rem;
+        }
+
+        .alert .span_line span:nth-of-type(2) {
+            font-size: 0.28rem;
+            color: #ff2d47;
+            font-weight: bold;
+        }
+
+        .alert span {
+            display: inline-block;
+        }
+
+        .alert .btn_group {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -moz-box;
+            display: flex;
+            width: 100%;
+            height: 0.78rem;
+            border-top: 0.01rem solid #e6e6e6;
+        }
+
+        .alert a {
+            position: relative;
+            display: inline-block;
+            width: 50%;
+            text-align: center;
+            line-height: 0.78rem;
+            color: #999999;
+            text-decoration: none;
+        }
+
+        .alert .cancel {
+            font-size: .28rem;
+
+        }
+
+        .alert .cancel:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 0.76rem;
+            border-right: 0.01rem solid #e6e6e6;
+        }
+
+        .alert .sure {
+            color: #11a1ff;
+            font-size: .28rem;
+        }
+
+        /* showAlert end */
+
+        /*new  */
+
+        .header {
+            background: #fff;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -moz-box;
+            display: flex;
+            -webkit-box-pack: justify;
+            -webkit-justify-content: space-between;
+            -moz-box-pack: justify;
+            justify-content: space-between;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            -moz-box-align: center;
+            align-items: center;
+            padding: 0 0.2rem;
+            min-height: 0.8rem;
+            color: #333333;
+        }
+
+        .header_left {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -moz-box;
+            display: flex;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            -moz-box-align: center;
+            align-items: center;
+            font-size: 0.28rem;
+        }
+
+        .header_left img {
+            width: 0.44rem;
+            height: 0.44rem;
+            border-radius: 50%;
+            -webkit-border-radius: 50%;
+            margin-right: 0.2rem;
+        }
+
+        .header_right {
+            font-size: 0.24rem;
+        }
+
+        .courier_list {
+            margin-top: 0.1rem;
+            background: #fff;
+        }
+
+        .courier_items {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -moz-box;
+            display: flex;
+            border-bottom: 0.01rem solid #f2f2f2;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            -moz-box-align: center;
+            align-items: center;
+            min-height: 2.4rem;
+            position: relative;
+            color: #333;
+            padding: .2rem 0;
+        }
+
+        .gou_img {
+            width: 0.3rem;
+            height: 0.3rem;
+            border-radius: 50%;
+            -webkit-border-radius: 50%;
+            margin: 0 0.28rem 0 0.27rem;
+        }
+
+        .items_right {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -moz-box;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -webkit-flex-direction: column;
+            -moz-box-orient: vertical;
+            -moz-box-direction: normal;
+            flex-direction: column;
+            line-height: .39rem;
+        }
+
+        .items_right p {
+            font-size: 0.28rem;
+            font-weight: 500;
+        }
+
+        .items_right span {
+            font-size: .24rem;
+        }
+
+        .items_right span.delay_items img {
+            width: .24rem;
+            height: .24rem;
+            position: relative;
+            top: .02rem;
+            left: .2rem;
+        }
+
+        .items_right span span.delay_msg {
+            color: #ff2d47;
+        }
+
+        .items_status {
+            position: absolute;
+            right: 0.2rem;
+            display: none;
+        }
+
+        .footer {
+            width: 100%;
+            height: 0.8rem;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+        }
+
+        .btn_get {
+            width: 100%;
+            height: 100%;
+            color: #fff;
+            background: #009eff;
+            outline: none;
+            font-size: .3rem;
+            border: none;
+        }
+
+        button.active_color {
+            background: #cccccc;
+        }
+
+        /* 取件成功小提示 */
+
+        .succ-pop {
+            width: 1.8rem;
+            height: .6rem;
+            background: #333333;
+            color: #fff;
+            font-size: .24rem;
+            text-align: center;
+            line-height: .6rem;
+            opacity: .8;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            margin-left: -0.9rem;
+            margin-top: -0.3rem;
+            z-index: 9999;
+            border-radius: 0.11rem;
+            -webkit-border-radius: 0.11rem;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <!-- <div class="header_left">
+                <img src="https://b-ssl.duitang.com/uploads/item/201410/18/20141018235057_4Wmsh.jpeg" alt="">
+                <span>便利店名称</span>
+            </div>
+            <div class="header_right">
+                <span>共计4件未取</span>
+            </div> -->
+        </div>
+        <div class="courier_list">
+            <!-- <div class="courier_items">
+                <div class="items_left">
+                    <img class="gou_img" src="http://cdn.ulandian.com/mylandian/express/gouque.png" alt="">
+                    <input hidden type="checkbox" checked name="box1">
+                </div>
+                <div class="items_right">
+                    <p>百世 112445547951878</p>
+                    <span>
+                        <span>快递员电话：15425475562</span>
+                    </span>
+                    <span>
+                        <span>到店时间：09-19 10:18:10</span>
+                    </span>
+                    <span>
+                        <span>位置编号：01-0001A8</span>
+                    </span>
+                    <span>
+                        <span>包裹类型：袋子</span>
+                    </span>
+                    <span class="delay_items">
+                        <span class="delay_msg">滞留45小时，超时费用￥3</span>
+                        <img src="http://cdn.ulandian.com/mylandian/express/wenhao.png" alt="">
+                    </span>
+                </div>
+                <span class="items_status">取件中</span>
+            </div> -->
+
+        </div>
+        <div class="footer">
+            <button class="btn_get">取件</button>
+        </div>
+    </div>
+
+
+    <div class="tips" id="showTip">
+        <div class="wrap">
+            <!-- <h3>提示</h3> -->
+            <div class="tips_divp">
+                <p></p>
+                <p></p>
+            </div>
+            <div class="btn_group">
+                <a href="javascript:;" class="sure"></a>
+            </div>
+        </div>
+    </div>
+    <div class="alert" id="showAlert">
+        <div class="wrap">
+            <h5>共计
+                <span class="counts"></span> 件</h5>
+            <p></p>
+            <div id="spanlines">
+                <!-- <div class="spanlines">
+                <div class="span_line">
+                    <span>共6件超时，超时费用：</span>
+                    <span>￥9.00</span>
+                </div>
+                <div class="span_line">
+                    <span>超时抵用券已抵扣：</span>
+                    <span>-￥3.00</span>
+                </div>
+            </div> -->
+            </div>
+            <div class="btn_group">
+                <a href="javascript:;" class="cancel">取消</a>
+                <a href="javascript:;" class="sure">确定</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="succ-pop">
+        取件成功
+    </div>
+
+    <script src="http://cdn.ulandian.com/src/js/jquery-3.2.0.min.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="http://cdn.ulandian.com/src/js/fastclick.js"></script>
+    <script src="http://cdn.ulandian.com/src/js/bscroll.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            FastClick.attach(document.body);
+        });
+
+        var ex = (function () {
+            var baseUrl = 'http://sh.ulandian.com/weixin/express/';
+            var getQueryString = function (key) {
+                var reg = new RegExp("(^|&)" + key + "=([^&]*)(&|$)");
+                var result = window.location.search.substr(1).match(reg);
+                return result ? decodeURIComponent(result[2]) : null;
+            }
+            // 包裹类型
+            var formatExpressSpec = function (data) {
+                switch (data) {
+                    case 'A':
+                        data = "袋子"
+                        break;
+                    case 'B':
+                        data = "大箱"
+                        break;
+                    case 'C':
+                        data = "小箱"
+                        break;
+                    case 'D':
+                        data = "其他"
+                        break;
+                    default:
+                        data = data
+                        break;
+                }
+                return data;
+            }
+
+            var toFixedFun = function (data) {
+                return data.toFixed(2);
+            }
+
+            var toFixedFormat = function (data) {
+                if (data > 0) {
+                    data = '-￥' + data;
+                } else {
+                    data = '￥0'
+                }
+                return data;
+            }
+            var resetList = function (lis) {
+                booleanArray = [];
+                oTime = [];
+                expressArray = [];
+                bool = true;
+                var kk = false;
+                overTimeCount = 0;
+                lis.each(function (i, v) {
+                    var bvalue = $(v).find('input[type=checkbox]').prop('checked');
+                    var obj = {};
+                    obj.id = $(v).data('id');
+                    obj.timeout = $(v).data('timeout');
+                    if (bvalue == true) {
+                        booleanArray.push(bvalue);
+                        oTime.push(obj);
+                    }
+                });
+                for (var i = 0, len = oTime.length; i < len; i++) {
+                    expressArray.push(oTime[i].id);
+                    if (oTime[i].timeout) {
+                        overTimeCount++;
+                    }
+                    if ((oTime[i].timeout).toString() != kk.toString()) {
+                        bool = false
+                    }
+                }
+            }
+            var handlePromises = function (url, obj, type) {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: baseUrl + url,
+                        type: type,
+                        data: obj,
+                        success: function (data) {
+                            if (typeof data == 'string') {
+                                data = JSON.parse(data);
+                            }
+                            resolve(data);
+                        },
+                        error: function (errors) {
+                            reject(errors);
+                        }
+                    });
+                })
+            };
+            var searchCounts = function (mobile) {
+                return handlePromises('noIncrement/scan/time.htm', {
+                    mobile: mobile
+                }, 'GET')
+            };
+            var showList = function (mobile, userId) {
+                return handlePromises('receive/express/list.htm', {
+                    mobile: mobile,
+                    userId: userId
+                }, 'GET')
+            };
+            var getPrice = function (mobile, userId, expressIds) {
+                return handlePromises('receive/express/money.htm', {
+                    mobile: mobile,
+                    userId: userId,
+                    expressIds: expressIds
+                }, 'GET')
+            }
+            var getPayparameters = function (mobile, userId, expressIds, wxOpenId) {
+                return handlePromises('submit/took/express.htm', {
+                    mobile: mobile,
+                    userId: userId,
+                    expressIds: expressIds,
+                    openId: wxOpenId
+                }, 'GET')
+            }
+            var getAvertiseLink = function (zoneId) {
+                return handlePromises('get/advertising/links.htm', {
+                    zoneId: zoneId
+                }, 'GET');
+            }
+
+            return {
+                getQueryString,
+                formatExpressSpec,
+                toFixedFun,
+                toFixedFormat,
+                resetList,
+                searchCounts,
+                showList,
+                getPrice,
+                getPayparameters,
+                getAvertiseLink
+            }
+        })();
+
+        var mobile = ex.getQueryString('mobile'),
+            userId = ex.getQueryString('userId'),
+            openId = ex.getQueryString('openId'),
+            wxOpenId = ex.getQueryString('wxOpenId'),
+            nickname = ex.getQueryString('nickname'),
+            iconurl = ex.getQueryString('iconurl'),
+            bool = true,
+            booleanArray = [],
+            oTime = [],
+            expressArray = [],
+            overTimeCount = 0,
+            imgchecked = 'http://cdn.ulandian.com/mylandian/express/gouque.png',
+            imgnocheck = 'http://cdn.ulandian.com/mylandian/express/gounone.png';
+
+        // 查询扫码次数
+        if (mobile) {
+            ex.searchCounts(mobile).then(function (resData) {
+                if (resData.status == 200) {
+                    if (resData.data > 1) {
+                        $('.btn_get').addClass('active_color');
+                        $('.btn_get').attr('disabled', true);
+                        countDown('您当天使用扫码取件的次数已经用完，', '请使用取件码取件', '确定')
+                    }
+                } else {
+                    showTip(resData.info, '', '确定', function () {});
+                }
+            }).catch(function (errors) {
+                console.log('ooo')
+                showTip('获取参数错误', '', '确定', function () {});
+            });
+        }
+
+        // 渲染y列表
+        if (mobile && userId) {
+            ex.showList(mobile, userId).then(function (resData) {
+                if (resData.status == 200) {
+                    let dataArray = resData.data.row;
+                    let total = resData.data.total;
+                    let headhtml = '';
+                    headhtml += '<div class="header_left"><img src=' + iconurl + ' alt=""><span>' +
+                        nickname + '</span></div><div class="header_right"><span>共计' + total +
+                        '件未取</span></div>'
+                    $('.header').append(headhtml);
+                    let html = '';
+                    for (let i = 0, lens = dataArray.length; i < lens; i++) {
+                        html += '<div class="courier_items" data-timeout=' + dataArray[i].isOvertime +
+                            ' data-id=' + dataArray[i].id + '>'
+                        html += '<div class="items_left">'
+                        html +=
+                            '<img class="gou_img" src="http://cdn.ulandian.com/mylandian/express/gouque.png" alt="">'
+                        html += '<input hidden type="checkbox" checked name="box1">'
+                        html += '</div>'
+                        html += '<div class="items_right">'
+                        html += '<p>' + dataArray[i].partnerName + ' ' + dataArray[i].expressNo +
+                            '</p>'
+                        html += '<span>'
+                        html += '<span>快递员电话：' + dataArray[i].courierTel + '</span>'
+                        html += '</span>'
+                        html += '<span>'
+                        html += '<span>到店时间：' + dataArray[i].receiveDate + '</span>'
+                        html += '</span>'
+                        html += '<span>'
+                        html += '<span>位置编号：' + dataArray[i].positionCode + '</span>'
+                        html += '</span>'
+                        html += '<span>'
+                        html += '<span>包裹类型：' + ex.formatExpressSpec(dataArray[i].expressSpec) + '</span>'
+                        html += '</span>'
+                        if (dataArray[i].isOvertime) {
+                            html += '<span class="delay_items">'
+                            html += '<span class="delay_msg">滞留' + dataArray[i].overtimeHours +
+                                '小时，超时费用￥' + dataArray[i].overtiemFee + '</span>'
+
+                            html += '</span>'
+                        }
+
+                        html += '</div>'
+                        html += '<span class="items_status">取件中</span>'
+                        html += '</div>'
+                    }
+                    $('.courier_list').append(html);
+                    //点击每一项
+                    var lis = $('.courier_items');
+                    lis.click(function () {
+                        if ($(this).find('input[type=checkbox]').is(':checked')) {
+                            $(this).find('input[type=checkbox]').attr("checked", false);
+                            $(this).find('.gou_img').attr('src', imgnocheck);
+                        } else {
+                            $(this).find('input[type=checkbox]').attr("checked", true);
+                            $(this).find('.gou_img').attr('src', imgchecked);
+                        }
+                        ex.resetList(lis);
+                    });
+                    ex.resetList(lis);
+                } else {
+                    showTip(resData.info, '', '确定', function () {});
+                }
+            }).catch(function (errors) {
+                showTip('获取参数错误，请稍后重试！', '', '确定', function () {});
+            })
+        }
+
+        //点击取件按钮
+        $('.btn_get').on('click', function () {
+            if (booleanArray.length == 0)
+                return;
+            var expressIds = '';
+            $('.alert .counts').text(oTime.length);
+            expressIds = expressArray.join(',');
+            // 获取费用判断超时
+            console.log('hhhh',expressIds)
+            ex.getPrice(mobile, userId, expressIds).then(function (resDatas) {
+                if (resDatas.status == 200) {
+                    // 没有超时
+                    if (resDatas.data.totalMoney == 0 && bool) {
+                        $('#spanlines').html('');
+                        console.log('不超时');
+                    }
+                    // 包含超时
+                    else {
+                        var pricehtml = '<div class="spanlines"><div class="span_line"><span>共' +
+                            overTimeCount + '件超时，超时费用：</span><span>￥' + ex.toFixedFun(resDatas.data
+                                .totalMoney) +
+                            '</span></div><div class="span_line"><span>超时抵用券已抵扣：</span><span>' +
+                            ex.toFixedFormat(resDatas.data.promotionMoney) + '</span></div></div>'
+                        $('#spanlines').html(pricehtml);
+                        console.log('超时');
+                    }
+                    showAlert('点击确定后，商户将收到取件申请并为您取件。如店内正处在高峰期，请理解并耐心等候', '确定', function () {
+                        confirmGetData(expressIds);
+                    });
+                } else {
+                    showTip(resDatas.info, '', '知道了', function () {});
+                }
+
+            }).catch(function (errors) {
+                console.log(errors);
+                showTip('获取参数错误，请稍后重试！', '', '确定', function () {});
+            })
+        })
+
+        // 点击弹窗中的确定
+        function confirmGetData(expressIds) {
+            // addCount(); //点击确定，增加扫码次数
+            // 获取支付参数
+            ex.getPayparameters(mobile, userId, expressIds, wxOpenId).then(function (redData) {
+                console.log(redData.data, '支付参数', mobile, userId, expressIds, wxOpenId);
+                if (redData.status == 200) {
+                    // 超时
+                    if (Object.keys(redData.data).length > 0) {
+                        function onBridgeReady() {
+                            WeixinJSBridge.invoke(
+                                'getBrandWCPayRequest', {
+                                    "appId": redData.data.appId,
+                                    "timeStamp": redData.data.timeStamp,
+                                    "nonceStr": redData.data.nonceStr,
+                                    "package": redData.data.package,
+                                    "packageValue": redData.data.packageValue,
+                                    "signType": redData.data.signType,
+                                    "paySign": redData.data.paySign,
+                                    "tradeSn": redData.data.tradeSn
+                                },
+                                function (res) {
+                                    if (res.err_msg == "get_brand_wcpay_request:ok") {
+                                        $('.items_status').show();
+                                        countDown('已通知商户为您取件，请稍后...', '（此申请48小时内有效）', '知道了');
+                                    }
+                                    if (res.err_msg == "get_brand_wcpay_request:cancel") {
+                                        // showAlert('支付取消', '确定', function () {
+                                        //     confirmGetData(expressIds);
+                                        // });
+                                        showTip('支付取消', '', '确定', function () {});
+                                    }
+
+                                    if (res.err_msg == "get_brand_wcpay_request:fail") {
+                                        showTip('支付失败', '', '确定', function () {});
+                                    }
+                                }
+                            );
+                        }
+                        if (typeof WeixinJSBridge == "undefined") {
+                            if (document.addEventListener) {
+                                document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                            } else if (document.attachEvent) {
+                                document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                                document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                            }
+                        } else {
+                            onBridgeReady();
+                        }
+
+                    }
+                    // 不超时
+                    else {
+                        $('.items_status').show();
+                        countDown('已通知商户为您取件，请稍后...', '（此申请48小时内有效）', '知道了');
+                    }
+                } else if (redData.status == 400) {
+                    showTip('请重新刷新页面', '', '确定', function () {});
+                } else {
+                    showTip(redData.info, '', '确定', function () {});
+                }
+            }).catch(function (errors) {
+                console.log(errors)
+                showTip('获取参数错误，请稍后重试！', '', '确定', function () {});
+            })
+        }
+
+
+        // // 倒计时
+        function countDown(text1, text2, confirmText) {
+            // 广告链接
+            function toLink() {
+                // 获取zoneId
+                if (openId) {
+                    $.ajax({
+                        url: 'http://sh.ulandian.com/weixin/user/getCityIdByOpenId.htm',
+                        type: 'GET',
+                        data: {
+                            openId: openId
+                        },
+                        success: function (data) {
+                            if (data.status == 200) {
+                                // zoneId = data.cityId;
+                                console.log(data.cityId)
+                                ex.getAvertiseLink(data.cityId).then(function (linkData) {
+                                    if (linkData.data && linkData.data.contentUrl) {
+                                        window.location.href = linkData.data.contentUrl
+                                    } else {
+                                        window.location.href =
+                                            "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa1c8b98a356d0ada&redirect_uri=http://weixin.ulandian.com/wx_auth/to_mylandian.html&response_type=code&scope=snsapi_base#wechat_redirect"
+                                    }
+                                }).catch(function (errors) {
+                                    showTip('获取参数错误，请稍后重试！', '', '确定', function () {
+                                        clearInterval(time);
+                                    });
+                                })
+
+
+                            } else {
+                                showTip(data.info, '', '确定', function () {});
+                            }
+
+                        },
+                        error: function () {
+                            showTip('获取参数错误，请稍后重试！', '', '确定', function () {});
+                        }
+                    })
+                }
+
+            }
+            var time = setInterval(showTime, 1000);
+            var second = 3;
+            showTip(text1, text2, confirmText + '(' + second + ')', function () {
+                toLink();
+                clearInterval(time);
+            });
+
+            function showTime() {
+                --second;
+                if (second > 0) {
+                    $('#showTip .sure').html(confirmText + '(' + second + ')')
+                }
+                if (second == 0) {
+                    // 自动跳转广告页
+                    $('#showTip').hide();
+                    clearInterval(time);
+                    toLink();
+                }
+            }
+        }
+
+        // // 增加扫码次数
+        function addCount() {
+            if (mobile) {
+                $.ajax({
+                    url: 'http://sh.ulandian.com/weixin/express/scan/time.htm',
+                    type: 'GET',
+                    async: false,
+                    data: {
+                        mobile: mobile
+                    },
+                    success: function (data) {
+                        var resData = JSON.parse(data);
+                        if (resData.status == 200) {
+                            // if (resData.data > 2) {
+                            // $('.btn_get').addClass('active_color');
+                            // $('.btn_get').attr('disabled', true);
+                            // countDown('您当天使用扫码取件的次数已经用完，','请使用取件码取件','确定')
+                            // }
+                        } else {
+                            showTip(resData.info, '', '确定', function () {});
+                        }
+                    },
+                    error: function () {
+                        showTip('获取参数错误，请稍后重试！', '', '确定', function () {});
+                    },
+                });
+            }
+        }
+
+        //提示消息,单个确定按钮
+        function showTip(msg, msg2, btntxt, callback) {
+            var $showTip = $('#showTip');
+            var $msg = $('#showTip p').eq(0);
+            var $msg2 = $('#showTip p').eq(1);
+            var $btn = $('#showTip .sure');
+            $msg.text(msg);
+            $msg2.text(msg2);
+            $btn.text(btntxt);
+            $showTip.fadeIn('fast');
+            $btn.on('click', function () {
+                callback();
+                $showTip.hide();
+            });
+        }
+        // //提示消息，取消、确定按钮，可跳转
+        function showAlert(msg, suretext, callback) {
+            var $showAlert = $('#showAlert');
+            var $msg = $('#showAlert p');
+            var $sure = $('#showAlert .sure');
+            var $cancel = $('#showAlert .cancel');
+            $msg.text(msg);
+            $sure.text(suretext);
+            $showAlert.fadeIn('fast');
+            $cancel.on('click', function (e) {
+                $showAlert.hide();
+                $sure.unbind('click');
+            });
+            $sure.on('click', function (e) {
+                console.log('this is clicked');
+                callback();
+                $showAlert.hide();
+                $sure.unbind('click');
+            });
+
+        }
+    </script>
+</body>
+
+</html>

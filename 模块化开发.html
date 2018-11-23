@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="screen-orientation" content="portrait" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <title></title>
+    <script>
+        (function (doc, win) {
+            var docEl = doc.documentElement,
+                resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+                recalc = function () {
+                    var clientWidth = docEl.clientWidth;
+                    if (!clientWidth) return;
+                    if (clientWidth > 640) clientWidth = 640;
+                    docEl.style.fontSize = 100 * (clientWidth / 640) + 'px';
+                };
+            if (!doc.addEventListener) return;
+            win.addEventListener(resizeEvt, recalc, false);
+            recalc();
+        })(document, window);
+    </script>
+    <link rel="stylesheet" href="http://cdn.ulandian.com/src/css/reset.css">
+</head>
+
+<body>
+    <div class="container">
+    </div>
+
+    <script src="http://cdn.ulandian.com/src/js/jquery-3.2.0.min.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="http://cdn.ulandian.com/src/js/fastclick.js"></script>
+    <script src="http://cdn.ulandian.com/src/js/bscroll.min.js"></script>
+
+    <script>
+        // 模块化开发：立即执行函数写法
+        var module1 = (function () {
+            var count_ = 0;
+            var m1 = function () {
+                console.log('函数1');
+            };
+            var m2 = function () {
+                console.log('函数2')
+            };
+            return {
+                m1: m1,
+                m2: m2
+            }
+        })();
+        // module1.m1();
+    </script>
+
+    <script>
+        // 宽放大模式
+        var module2 = (function (mod) {
+            mod.m3 = function () {
+                return 99;
+            };
+            return mod;
+        })(module2 || {});
+        console.log(module2.m3());
+    </script>
+
+    <script>
+        // 
+        let ex = (function () {
+            var baseUrl = 'http://sh.ulandian.com/weixin/express/';
+            var fetchApi = function (url, obj, type) {
+                var baseUrl = this.baseUrl;
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: baseUrl + url,
+                        type: type,
+                        data: obj,
+                        success: function (data) {
+                            if (typeof data == 'string') {
+                                data = JSON.parse(data);
+                            }
+                            resolve(data);
+                        },
+                        error: function () {
+                            reject();
+                        }
+                    });
+                })
+            };
+            var searchCounts = function (mobile) {
+                return fetchApi('noIncrement/scan/time.htm', {
+                    mobile: mobile
+                }, 'GET')
+            }
+        })();
+    </script>
+
+    <script>
+        // 模块化开发
+        // 自运行函数
+        var module1 = (function () {
+            var _count = 0;
+            var m1 = function () {
+                //...
+            };
+            var m2 = function () {
+                //...
+            };
+            return {
+                m1: m1,
+                m2: m2
+            };
+        })();
+    </script>
+</body>
+
+</html>
