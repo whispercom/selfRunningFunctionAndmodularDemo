@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="email=no" />
+    <meta name="screen-orientation" content="portrait" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
+    <title></title>
+    <script>
+        (function (doc, win) {
+            var docEl = doc.documentElement,
+                resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+                recalc = function () {
+                    var clientWidth = docEl.clientWidth;
+                    if (!clientWidth) return;
+                    if (clientWidth > 640) clientWidth = 640;
+                    docEl.style.fontSize = 100 * (clientWidth / 640) + 'px';
+                };
+            if (!doc.addEventListener) return;
+            win.addEventListener(resizeEvt, recalc, false);
+            recalc();
+        })(document, window);
+    </script>
+    <link rel="stylesheet" href="http://cdn.ulandian.com/src/css/reset.css">
+</head>
+
+<body>
+    <div class="container">
+    </div>
+
+    <script src="http://cdn.ulandian.com/src/js/jquery-3.2.0.min.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="http://cdn.ulandian.com/src/js/fastclick.js"></script>
+    <script src="http://cdn.ulandian.com/src/js/bscroll.min.js"></script>
+    <script>
+        var GLOBAL = {};
+        // 或者
+        if(init){
+            init();
+        }
+
+        function init() {
+            (function (window, $, undefined) {
+                var a = 'Mary',
+                    b = "hellow world";
+                GLOBAL.A = {};
+                GLOBAL.A.name = a;
+                GLOBAL.A.age = 20;
+                GLOBAL.A.sex = '女';
+                GLOBAL.A.job = function () {
+                    console.log(this.name + '今年' + this.age + '岁了');
+                }
+                GLOBAL.A.reset = function (sreset) {
+                    return sreset < 20 ? '挺年轻' : '不年轻了哦';
+                }
+            })(window, $);
+
+            (function (window, $, undefined) {
+                var a = 'June',
+                    b = 20;
+                GLOBAL.B = {};
+                GLOBAL.B.name = a;
+                GLOBAL.B.age = b;
+
+            })(window, $);
+
+            (function (window, $, undefined) {
+                var a = GLOBAL.A.age,
+                    c = 'she is very beautiful';
+                console.log(GLOBAL.A.reset(10));
+                GLOBAL.A.job(); //Mary今年21岁了
+
+            })(window, $);
+        }
+        // window对象会在网页内元素全部加载完毕之后触发onload事件。
+        // window.onload=init;
+        // 最好使用这个入口
+        // $(document).ready(init);
+        
+    </script>
+
+
+</body>
+
+</html>
